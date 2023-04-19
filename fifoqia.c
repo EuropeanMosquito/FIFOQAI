@@ -11,9 +11,10 @@ struct fifo {
   char* contents[];
 };
 
-struct fifo* fifo_new (int size)
+struct fifo* 
+fifo_new (int size)
 {
-  struct fifo* fifo = (struct fifo*) malloc (sizeof (struct fifo) + sizeof (char*) * size);
+  struct fifo* fifo = malloc (sizeof (struct fifo) + sizeof (char*) * size);
   fifo->size = size;
   fifo->empty = 1;
   fifo->produce = 0;
@@ -22,19 +23,21 @@ struct fifo* fifo_new (int size)
   return fifo;
 }
 
-void fifo_free (struct fifo* fifo)
+void 
+fifo_free (struct fifo* fifo)
 {
-  fifo_dump(fifo);
+  fifo_dump (fifo);
 
   free (fifo);
 }
 
-int fifo_push (struct fifo* fifo, const char* str)
+int 
+fifo_push (struct fifo* fifo, const char* str)
 {
   if (!fifo->empty)
     return 0;
 
-  fifo->contents[fifo->produce] = (char*) malloc (strlen (str) + 1);
+  fifo->contents[fifo->produce] = malloc (strlen (str) + 1);
   strcpy (fifo->contents[fifo->produce], str);
   fifo->produce = (fifo->produce + 1) % fifo->size;
   if (fifo->produce == fifo->consume)
@@ -43,7 +46,8 @@ int fifo_push (struct fifo* fifo, const char* str)
   return 1;
 }
 
-char* fifo_pull (struct fifo* fifo)
+char* 
+fifo_pull (struct fifo* fifo)
 {
   if (fifo->produce == fifo->consume && fifo->empty)
     return NULL;
@@ -55,13 +59,13 @@ char* fifo_pull (struct fifo* fifo)
   return temp;
 }
 
-void fifo_dump (struct fifo* fifo)
+void
+fifo_dump (struct fifo* fifo)
 {
   char* str;
-  while ((str = fifo_pull(fifo)))
+  while ((str = fifo_pull (fifo)))
     free (str);
 
   fifo->consume = 0;
   fifo->produce = 0;
 }
-
